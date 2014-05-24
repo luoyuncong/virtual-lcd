@@ -30,6 +30,11 @@ void LcdView::setLcdSize(int w, int h)
     initLcdView();
 }
 
+bool LcdView::saveImage(QString &fileName)
+{
+    return lcdImage.save(fileName, "PNG");
+}
+
 void LcdView::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);

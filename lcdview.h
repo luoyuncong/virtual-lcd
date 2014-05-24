@@ -11,6 +11,7 @@ public:
     LcdView(QWidget *parent = 0);
     void initLcdView();
     void setLcdSize(int w, int h);
+    bool saveImage(QString &fileName);
 signals:
     void showPos(int x, int y);
 protected:

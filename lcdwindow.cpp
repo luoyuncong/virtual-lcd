@@ -1,6 +1,8 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "lcdwindow.h"
 
 LcdWindow::LcdWindow(QWidget *parent) :
@@ -22,6 +24,7 @@ void LcdWindow::setLcdSize(int w, int h)
 void LcdWindow::createWindow(int w, int h)
 {
     QPushButton *saveImage = new QPushButton("保存图片");
+    connect(saveImage, &QPushButton::clicked, this, &LcdWindow::saveImage);
     showPosition = new QLabel("X:0, Y:0");
     showPosition->setAlignment(Qt::AlignRight);
     lcdView = new LcdView;
@@ -45,4 +48,14 @@ void LcdWindow::createWindow(int w, int h)
 void LcdWindow::showPos(int x, int y)
 {
     showPosition->setText("X:" + QString::number(x) + " ,Y:" + QString::number(y));
+}
+
+void LcdWindow::saveImage()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "保存图片",  "./untitled.png","Images (*.png)");
+    if(fileName.isEmpty())
+        return;
+
+    if(!lcdView->saveImage(fileName))
+        QMessageBox::warning(this, "警告", "保存图片失败!", QMessageBox::Ok);
 }

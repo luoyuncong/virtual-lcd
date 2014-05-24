@@ -17,6 +17,7 @@ signals:
 
 public slots:
     void showPos(int x, int y);
+    void saveImage();
 private:
     LcdView *lcdView;
     QLabel *showPosition;
