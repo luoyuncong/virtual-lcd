@@ -5,6 +5,8 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT  += serialport
+#DEFINES += QT_NO_DEBUG_OUTPUT
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,7 +16,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    lcdview.cpp
+    lcdview.cpp \
+    serialport.cpp \
+    global.cpp
 
 HEADERS  += mainwindow.h \
-    lcdview.h
+    lcdview.h \
+    serialport.h \
+    global.h

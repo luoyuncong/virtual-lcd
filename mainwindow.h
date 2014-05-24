@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QComboBox>
+#include <QPushButton>
+#include <QCheckBox>
 #include "lcdview.h"
 
 class MainWindow : public QMainWindow
@@ -14,6 +16,7 @@ public:
     ~MainWindow();
     void createMainWindow();
     void createLcdWindow();
+    void initSerialPort();
 public slots:
     void userBaudChanged(int state);
     void userResolutionChanged(int state);
@@ -21,8 +24,13 @@ public slots:
     void showPos(int x, int y);
     void saveImage();
 private:
+    QComboBox *portNameComboBox;
     QComboBox *baudRateComboBox;
     QComboBox *resolutionComboBox;
+
+    QPushButton *openButton;
+    QCheckBox *userBaudRate;
+    QCheckBox *userResolution;
 
     QWidget *lcdWindow;
     LcdView *lcdView;

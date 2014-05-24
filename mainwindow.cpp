@@ -1,12 +1,9 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QGridLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QComboBox>
-#include <QCheckBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QSerialPortInfo>
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
@@ -15,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("虚拟LCD - 作者：小老虎");
     createMainWindow();
     createLcdWindow();
+    initSerialPort();
 }
 
 MainWindow::~MainWindow()
@@ -28,16 +26,16 @@ void MainWindow::createMainWindow()
     QLabel *baudRateLabel = new QLabel("波特率：");
     QLabel *resolutionLabel = new QLabel("分辨率：");
 
-    QComboBox *portCombobox = new QComboBox;
+    portNameComboBox = new QComboBox;
     baudRateComboBox = new QComboBox;
     resolutionComboBox = new QComboBox;
 
-    QCheckBox *userBaudRateCheck = new QCheckBox("自定义");
-    QCheckBox *userResolutionCheck = new QCheckBox("自定义");
-    connect(userBaudRateCheck, &QCheckBox::stateChanged, this, &MainWindow::userBaudChanged);
-    connect(userResolutionCheck, &QCheckBox::stateChanged, this, &MainWindow::userResolutionChanged);
+    userBaudRate = new QCheckBox("自定义");
+    userResolution = new QCheckBox("自定义");
+    connect(userBaudRate, &QCheckBox::stateChanged, this, &MainWindow::userBaudChanged);
+    connect(userResolution, &QCheckBox::stateChanged, this, &MainWindow::userResolutionChanged);
 
-    QPushButton *openButton = new QPushButton("打开");
+    openButton = new QPushButton("打开");
     connect(openButton, &QPushButton::clicked, this, &MainWindow::openSerialPort);
 
     baudRateComboBox->addItems(QStringList()<<"1200"<<"2400"<<"4800"<<"9600"<<
@@ -49,14 +47,14 @@ void MainWindow::createMainWindow()
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(portNameLabel, 0, 0);
-    layout->addWidget(portCombobox, 0, 1);
+    layout->addWidget(portNameComboBox, 0, 1);
     layout->addWidget(openButton, 0, 2);
     layout->addWidget(baudRateLabel, 1, 0);
     layout->addWidget(baudRateComboBox, 1, 1);
-    layout->addWidget(userBaudRateCheck, 1, 2);
+    layout->addWidget(userBaudRate, 1, 2);
     layout->addWidget(resolutionLabel, 2, 0);
     layout->addWidget(resolutionComboBox, 2, 1);
-    layout->addWidget(userResolutionCheck, 2, 2);
+    layout->addWidget(userResolution, 2, 2);
     layout->setColumnStretch(1, 1);
     window->setLayout(layout);
 
@@ -89,6 +87,13 @@ void MainWindow::createLcdWindow()
     lcdWindow->setLayout(mainLayout);
 }
 
+void MainWindow::initSerialPort()
+{
+    QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+    for (int i = 0; i < ports.count(); i++)
+        portNameComboBox->addItem(ports.at(i).portName());
+}
+
 void MainWindow::userBaudChanged(int state)
 {
     if(state == Qt::Checked)
@@ -109,15 +114,37 @@ void MainWindow::userResolutionChanged(int state)
 
 void MainWindow::openSerialPort()
 {
-    QString text = resolutionComboBox->currentText();
-    QStringList list = text.split('*', QString::SkipEmptyParts);
-    if(list.count() >= 2)
+    if(openButton->text() == "打开")
     {
-        int w = list.at(0).toInt();
-        int h = list.at(1).toInt();
-        lcdView->setLcdSize(w, h);
-        lcdWindow->setFixedSize(w + 23, h + 50);
-        lcdWindow->show();
+        if(lcdView->openSerial(portNameComboBox->currentText(), baudRateComboBox->currentText().toInt()))
+        {
+            openButton->setText("关闭");
+            portNameComboBox->setEnabled(false);
+            baudRateComboBox->setEnabled(false);
+            resolutionComboBox->setEnabled(false);
+            userBaudRate->setEnabled(false);
+            userResolution->setEnabled(false);
+            QString text = resolutionComboBox->currentText();
+            QStringList list = text.split('*', QString::SkipEmptyParts);
+            if(list.count() >= 2)
+            {
+                int w = list.at(0).toInt();
+                int h = list.at(1).toInt();
+                lcdView->setLcdSize(w, h);
+                lcdWindow->setFixedSize(w + 23, h + 50);
+                lcdWindow->show();
+            }
+        }
+    }
+    else
+    {
+        lcdView->closeSerial();
+        openButton->setText("打开");
+        portNameComboBox->setEnabled(true);
+        baudRateComboBox->setEnabled(true);
+        resolutionComboBox->setEnabled(true);
+        userBaudRate->setEnabled(true);
+        userResolution->setEnabled(true);
     }
 }
 
