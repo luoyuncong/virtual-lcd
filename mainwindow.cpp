@@ -9,7 +9,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("虚拟LCD - 小老虎(luoyuncong@126.com)");
+    setWindowTitle("虚拟LCD - 作者：小老虎");
     createMainWindow();
     createLcdWindow();
 }
@@ -31,8 +31,11 @@ void MainWindow::createMainWindow()
 
     QCheckBox *userBaudRateCheck = new QCheckBox("自定义");
     QCheckBox *userResolutionCheck = new QCheckBox("自定义");
+    connect(userBaudRateCheck, &QCheckBox::stateChanged, this, &MainWindow::userBaudChanged);
+    connect(userResolutionCheck, &QCheckBox::stateChanged, this, &MainWindow::userResolutionChanged);
 
     QPushButton *openButton = new QPushButton("打开");
+    connect(openButton, &QPushButton::clicked, this, &MainWindow::openSerialPort);
 
     baudRateComboBox->addItems(QStringList()<<"1200"<<"2400"<<"4800"<<"9600"<<
                        "14400"<<"19200"<<"38400"<<"57600"<<"115200"<<"230400");
@@ -40,9 +43,6 @@ void MainWindow::createMainWindow()
 
     resolutionComboBox->addItems(QStringList()<<"320*240"<<"480*320"<<"640*480"<<"800*480");
     resolutionComboBox->setCurrentIndex(3);
-
-    connect(userBaudRateCheck, &QCheckBox::stateChanged, this, &MainWindow::userBaudChanged);
-    connect(userResolutionCheck, &QCheckBox::stateChanged, this, &MainWindow::userResolutionChanged);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(portNameLabel, 0, 0);
@@ -58,20 +58,12 @@ void MainWindow::createMainWindow()
     window->setLayout(layout);
 
     setCentralWidget(window);
-    resize(420, 160);
+    resize(320, 160);
 }
 
 void MainWindow::createLcdWindow()
 {
-    QString text = resolutionComboBox->currentText();
-    QStringList list = text.split('*', QString::SkipEmptyParts);
-    if(list.count() >= 2)
-    {
-        int w = list.at(0).toInt();
-        int h = list.at(1).toInt();
-        lcdWindow = new LcdWindow(w, h);
-        lcdWindow->show();
-    }
+    lcdWindow = new LcdWindow(800, 480);
 }
 
 void MainWindow::userBaudChanged(int state)
@@ -90,4 +82,17 @@ void MainWindow::userResolutionChanged(int state)
     else
         resolutionComboBox->setEditable(false);
     resolutionComboBox->update();
+}
+
+void MainWindow::openSerialPort()
+{
+    QString text = resolutionComboBox->currentText();
+    QStringList list = text.split('*', QString::SkipEmptyParts);
+    if(list.count() >= 2)
+    {
+        int w = list.at(0).toInt();
+        int h = list.at(1).toInt();
+        lcdWindow->setLcdSize(w, h);
+        lcdWindow->show();
+    }
 }

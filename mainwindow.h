@@ -17,6 +17,7 @@ public:
 public slots:
     void userBaudChanged(int state);
     void userResolutionChanged(int state);
+    void openSerialPort();
 private:
     QComboBox *baudRateComboBox;
     QComboBox *resolutionComboBox;

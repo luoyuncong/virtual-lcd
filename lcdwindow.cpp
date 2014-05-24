@@ -19,10 +19,12 @@ LcdWindow::LcdWindow(int w, int h, QWidget *parent)
 void LcdWindow::setLcdSize(int w, int h)
 {
     lcdView->setLcdSize(w, h);
+    setFixedSize(w + 25, h + 50);
 }
 
 void LcdWindow::createWindow(int w, int h)
 {
+    setWindowTitle("RGB565 - 小老虎(luoyuncong@126.com)");
     QPushButton *saveImage = new QPushButton("保存图片");
     connect(saveImage, &QPushButton::clicked, this, &LcdWindow::saveImage);
     showPosition = new QLabel("X:0, Y:0");
@@ -41,8 +43,6 @@ void LcdWindow::createWindow(int w, int h)
     mainLayout->addWidget(lcdView);
     mainLayout->setStretch(1, 1);
     setLayout(mainLayout);
-
-    setFixedSize(w + 20, h + 50);
 }
 
 void LcdWindow::showPos(int x, int y)
