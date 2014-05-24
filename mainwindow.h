@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void createMainWindow();
+    void createSettingDialog();
     void createLcdWindow();
     void initSerialPort();
 public slots:
@@ -23,6 +23,7 @@ public slots:
     void openSerialPort();
     void showPos(int x, int y);
     void saveImage();
+    void showSettingDialog();
 private:
     QComboBox *portNameComboBox;
     QComboBox *baudRateComboBox;
@@ -33,6 +34,7 @@ private:
     QCheckBox *userResolution;
 
     QWidget *lcdWindow;
+    QDialog *settingDialog;
     LcdView *lcdView;
     QLabel *showPosition;
 };

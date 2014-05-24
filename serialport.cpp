@@ -18,17 +18,17 @@ void SerialPort::sendData(const char *data, qint64 maxSize)
     quint8 sum = ~ Global::checksum((const uchar *)data, maxSize);
     bytes.append((char)sum);
 
-    replace.append((char)0xdb);
-    replace.append((char)0xdd);
-    bytes.replace((char)0xdb, replace);
+    replace.append(ESC);
+    replace.append(ESC_ESC);
+    bytes.replace(ESC, replace);
 
     replace.clear();
-    replace.append((char)0xdb);
-    replace.append((char)0xdc);
-    bytes.replace((char)0xc0, replace);
+    replace.append(ESC);
+    replace.append(ESC_END);
+    bytes.replace(END, replace);
 
-    bytes.insert(0, (char)0xc0);
-    bytes.append((char)0xc0);
+    bytes.insert(0, END);
+    bytes.append(END);
 
     write(bytes);
 }
