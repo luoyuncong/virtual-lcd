@@ -14,9 +14,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    lcdwindow.cpp \
     lcdview.cpp
 
 HEADERS  += mainwindow.h \
-    lcdwindow.h \
     lcdview.h

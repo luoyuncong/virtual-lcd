@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QComboBox>
-#include "lcdwindow.h"
+#include "lcdview.h"
 
 class MainWindow : public QMainWindow
 {
@@ -18,10 +18,15 @@ public slots:
     void userBaudChanged(int state);
     void userResolutionChanged(int state);
     void openSerialPort();
+    void showPos(int x, int y);
+    void saveImage();
 private:
     QComboBox *baudRateComboBox;
     QComboBox *resolutionComboBox;
-    LcdWindow *lcdWindow;
+
+    QWidget *lcdWindow;
+    LcdView *lcdView;
+    QLabel *showPosition;
 };
 
 #endif // MAINWINDOW_H
