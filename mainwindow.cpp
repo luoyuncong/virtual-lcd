@@ -9,7 +9,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("RGB565 - 作者：小老虎(luoyuncong@126.com)");
+    setWindowTitle("虚拟LCD(RGB565) - [作者：小老虎(luoyuncong@126.com)]");
     createSettingDialog();
     createLcdWindow();
     initSerialPort();
