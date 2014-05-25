@@ -16,7 +16,7 @@ LcdView::LcdView(QWidget *parent):
 void LcdView::initLcd()
 {
     setFixedSize(width, height);
-    lcdImage = QImage(width, height, QImage::Format_RGB16);
+    lcdImage = QImage(width, height, QImage::Format_RGB32);
     lcdImage.fill(Qt::blue);
     update();
 }
@@ -28,11 +28,11 @@ void LcdView::initSerial()
 
     updateTimer = new QTimer(this);
     updateTimer->setSingleShot(true);
-    updateTimer->setInterval(100);
+    updateTimer->setInterval(200);
     connect(updateTimer, &QTimer::timeout, this, &LcdView::updateTimeout);
 
     clickedTimer = new QTimer(this);
-    clickedTimer->setInterval(200);
+    clickedTimer->setInterval(500);
     connect(clickedTimer, &QTimer::timeout, this, &LcdView::clickedTimeout);
 }
 
@@ -162,25 +162,26 @@ void LcdView::drawVLine(uchar *data, int size)
 
 void LcdView::drawBlitLine(uchar *data, int size)
 {
-//    if(size >= 8)
-//    {
-//        int x1 = data[0] + (data[1] << 8);
-//        int x2 = data[2] + (data[3] << 8);
-//        int y = data[4] + (data[5] << 8);
+    if(size >= 8)
+    {
+        int x = data[0] + (data[1] << 8);
+        int y = data[2] + (data[3] << 8);
+        int points = data[4] + (data[5] << 8);
 
-//        trimLcdSize(x1, y);
-//        trimLcdSize(x2, y);
+        trimLcdSize(x, y);
 
-//        size = (size - 6)/2;
-//        if(size < x2 - x1 + 1)
-//            return;
+        size = (size - 6)/2;
+        if(size != points)
+            return;
 
-//        for(int x = x1, i = 0; x <= x2; x++, i++)
-//        {
-//            QRgb c = rgbFrom565(data[6+2*i] + (data[6+2*i+1] << 8));
-//            lcdImage.setPixel(x, y, c);
-//        }
-//    }
+        points += x;
+        for(int index = x, i = 0; index < points; index++, i++)
+        {
+            QRgb c = rgbFrom565(data[6+2*i] + (data[6+2*i+1] << 8));
+            trimLcdSize(index, y);
+            lcdImage.setPixel(index, y, c);
+        }
+    }
 }
 
 bool LcdView::openSerial(const QString &name, int baudRate)
